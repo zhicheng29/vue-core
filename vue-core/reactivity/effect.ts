@@ -9,17 +9,17 @@ interface Options {
 }
 
 // 储存函数
-let reactiveEffect;
+let activeEffect;
 
 export const effect = (fn: Function, options?: Options) => {
 	const _effect = () => {
 		// 储存更新函数
-		reactiveEffect = _effect;
+		activeEffect = _effect;
 		const res = fn();
 		return res;
 	};
 	_effect.options = options; // 因为trigger的时候要用
-	if (options.lazy) {
+	if (options?.lazy) {
 		// 如果是lazy(computed) 不调用
 	} else {
 		// 如果不是lazy 自动调用
@@ -50,7 +50,7 @@ export const tracker = (target, key) => {
 		deps = new Set();
 		depsMap.set(key, deps);
 	}
-	deps.add(reactiveEffect);
+	deps.add(activeEffect);
 };
 
 // 更新依赖
@@ -59,7 +59,7 @@ export const trigger = (target, key) => {
 	let deps = depsMap.get(key);
 	deps.forEach((effect) => {
 		effect();
-		if (effect.options && effect.options.scheduler) {
+		if (effect?.options?.scheduler) {
 			effect.options.scheduler(effect);
 		} else {
 			effect();

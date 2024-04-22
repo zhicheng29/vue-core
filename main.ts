@@ -2,15 +2,31 @@ import { reactive } from './vue-core/reactivity/reactive';
 import { effect } from './vue-core/reactivity/effect';
 import { computed } from './vue-core/reactivity/computed';
 import { watch } from './vue-core/reactivity/watch';
+import { ref } from './vue-core/reactivity/ref';
 
 const app = document.querySelector('#app')!;
 
-// 只能接受引用类型 数组 对象 object
-const obj = reactive({
+// !ref
+const num = ref<string>('1');
+const obj = ref({
 	name: 'nothing',
-	age: 18,
-	sing: '唱歌',
 });
+
+effect(() => {
+	app.innerHTML = num.value + obj.value.name;
+});
+setTimeout(() => {
+	num.value = '2';
+	obj.value.name = 'nothing2';
+	console.log(num, obj);
+}, 1000);
+
+// 只能接受引用类型 数组 对象 object
+// const obj = reactive({
+// 	name: 'nothing',
+// 	age: 18,
+// 	sing: '唱歌',
+// });
 
 // !watch
 // watch(obj, (newVal, oldVal) => {
@@ -36,7 +52,6 @@ const obj = reactive({
 // });
 // 修改值依赖值之前必须要触发一次收集依赖吗?
 // 需要触发一次 effect 依赖收集(name.value),后续更改依赖值才会生效
-// 在vue中, 依赖收集(name.value)的顺序是在 computed 中的 依赖值 改变之前执行的吗?
 
 // console.log(name.value);
 // obj.name = 'hello nothing';
